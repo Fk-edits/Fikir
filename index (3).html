@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fikir Habtamu · Nexora</title>
+    <style>
+        :root {
+            --bg: #0a0a10;
+            --surface: #12121d;
+            --surface2: #1a1a2b;
+            --accent: #7c5cfc;
+            --accent2: #a78bfa;
+            --accent-soft: #7c5cfc30;
+            --text: #eaeaf2;
+            --text2: #b0b0c5;
+            --text3: #8888a5;
+            --border: #222238;
+            --radius: 18px;
+            --radius-sm: 12px;
+            --transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(130px);
+            opacity: 0.14;
+            pointer-events: none;
+            z-index: 0;
+            animation: orbDrift 22s infinite alternate ease-in-out;
+        }
+        .orb-1 { width:600px; height:600px; background:#7c5cfc; top:-15%; left:-10%; }
+        .orb-2 { width:450px; height:450px; background:#5c8cfc; bottom:-10%; right:-8%; animation-delay:-5s; animation-duration:25s; }
+        .orb-3 { width:380px; height:380px; background:#a78bfa; top:60%; left:55%; animation-delay:-12s; animation-duration:20s; }
+        @keyframes orbDrift {
+            0% { transform: translate(0,0) scale(1); }
+            100% { transform: translate(80px,-60px) scale(1.15); }
+        }
+
+        canvas#particles {
+            position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; opacity:0.45;
+        }
+
+        .container { position:relative; z-index:1; max-width:920px; margin:0 auto; padding:20px 24px; }
+
+        /* Navbar */
+        .navbar {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:14px 24px; background:rgba(18,18,29,0.85); backdrop-filter:blur(18px);
+            border:1px solid var(--border); border-radius:60px; margin-top:16px;
+            position:sticky; top:16px; z-index:100; box-shadow:0 12px 32px rgba(0,0,0,0.45);
+            transition:var(--transition);
+        }
+        .navbar:hover { border-color:#3d3d5c; }
+        .nav-logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.4rem; color:#d6ccff; text-decoration:none; }
+        .nav-logo img { height:44px; width:auto; } /* increased size */
+        .nav-links { display:flex; gap:22px; list-style:none; }
+        .nav-links a { color:var(--text2); text-decoration:none; font-weight:500; font-size:0.95rem; transition:color var(--transition); position:relative; }
+        .nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:2px; background:var(--accent); border-radius:2px; transition:width var(--transition); }
+        .nav-links a:hover { color:#fff; }
+        .nav-links a:hover::after { width:100%; }
+
+        /* Hero */
+        .hero { text-align:center; padding:60px 20px 40px; }
+        .hero-avatar {
+            width:110px; height:110px; border-radius:50%; object-fit:cover;
+            border:3px solid var(--accent); box-shadow:0 0 70px var(--accent-soft), 0 0 140px #7c5cfc22;
+            margin:0 auto 20px; animation:avatarGlow 4s infinite alternate; transition:transform 0.3s;
+        }
+        .hero-avatar:hover { transform:scale(1.05); }
+        @keyframes avatarGlow { 0%{box-shadow:0 0 50px var(--accent-soft),0 0 100px #7c5cfc20;} 100%{box-shadow:0 0 90px #a78bfa55,0 0 160px #7c5cfc40;} }
+        .hero h1 { font-size:clamp(2.4rem,7vw,3.8rem); font-weight:800; letter-spacing:-1.5px; background:linear-gradient(135deg,#f0e8ff,#c9b8ff,#7c5cfc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:6px; }
+        .hero .tagline { font-size:1.2rem; color:var(--text2); font-weight:500; margin-bottom:10px; }
+        .hero .bio-short { font-size:1rem; color:var(--text3); max-width:560px; margin:0 auto 24px; font-style:italic; }
+        .badge-group { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+        .badge { display:inline-flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border); padding:8px 18px; border-radius:40px; font-size:0.9rem; font-weight:600; color:var(--text2); transition:var(--transition); }
+        .badge:hover { border-color:var(--accent); color:#fff; background:#1f1f36; box-shadow:0 0 24px #7c5cfc18; transform:translateY(-2px); }
+        .badge-icon { width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
+
+        /* Sections */
+        section, .nexora-highlight {
+            margin:36px 0; padding:32px 28px; background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius); transition:border-color 0.3s, box-shadow 0.3s; position:relative; overflow:hidden;
+        }
+        section:hover, .nexora-highlight:hover { border-color:#3a3a58; box-shadow:0 16px 48px rgba(0,0,0,0.4); }
+        .section-title { font-size:1.6rem; font-weight:700; margin-bottom:24px; display:flex; align-items:center; gap:12px; letter-spacing:-0.3px; }
+        .title-icon { font-size:1.8rem; color:var(--accent2); display:flex; align-items:center; }
+        .title-line { flex:1; height:1px; background:var(--border); border-radius:1px; }
+
+        .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-top:20px; }
+        .info-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:18px 16px; text-align:center; transition:var(--transition); }
+        .info-card:hover { border-color:#505070; transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+        .info-label { font-size:0.7rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text3); margin-bottom:6px; }
+        .info-value { font-weight:700; font-size:1rem; color:#e2dbff; }
+
+        /* Skills */
+        .skill-item { margin-bottom:18px; }
+        .skill-header { display:flex; justify-content:space-between; margin-bottom:6px; font-weight:600; color:#dddaff; font-size:0.9rem; }
+        .skill-bar { height:8px; background:#23233a; border-radius:10px; overflow:hidden; }
+        .skill-fill { height:100%; width:0%; background:linear-gradient(90deg,#7c5cfc,#a78bfa); border-radius:10px; transition:width 1.2s cubic-bezier(0.22,1,0.36,1); box-shadow:0 0 12px #7c5cfc44; }
+
+        /* Projects */
+        .projects-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; }
+        .project-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:20px 18px; transition:var(--transition); }
+        .project-card:hover { border-color:#5c5c80; transform:translateY(-5px); box-shadow:0 14px 32px rgba(0,0,0,0.45); }
+        .project-icon { font-size:2rem; margin-bottom:10px; color:var(--accent2); display:inline-block; }
+        .project-title { font-weight:700; font-size:1rem; color:#e0d8ff; margin-bottom:6px; }
+        .project-desc { font-size:0.85rem; color:var(--text3); line-height:1.4; }
+
+        /* Services grid */
+        .services-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; }
+        .service-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:18px 12px; text-align:center; transition:var(--transition); }
+        .service-card:hover { border-color:#5c5c80; transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+        .service-symbol { font-size:2rem; color:var(--accent2); margin-bottom:8px; }
+        .service-name { font-weight:600; font-size:0.85rem; color:#dddaff; }
+
+        /* Package image */
+        .package-img {
+            width:100%; max-width:800px; border-radius:var(--radius); border:2px solid var(--border);
+            box-shadow:0 20px 40px rgba(0,0,0,0.5); transition:var(--transition); display:block; margin:20px auto;
+        }
+        .package-img:hover { border-color:var(--accent); box-shadow:0 20px 50px #7c5cfc22; }
+
+        /* Nexora highlight */
+        .nexora-highlight {
+            background:linear-gradient(135deg,#18182f,#15152a); border:2px solid #7c5cfc33;
+            text-align:center; margin:36px 0; padding:28px;
+        }
+        .nexora-highlight::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%,#7c5cfc15,transparent 70%); pointer-events:none; }
+        .nexora-name { font-size:2.6rem; font-weight:900; letter-spacing:-1px; background:linear-gradient(135deg,#d4c5ff,#a78bfa,#7c5cfc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; position:relative; z-index:1; }
+        .nexora-desc { color:var(--text2); position:relative; z-index:1; margin-top:8px; font-size:0.95rem; max-width:600px; margin-left:auto; margin-right:auto; }
+
+        /* Timeline */
+        .timeline { display:flex; flex-direction:column; gap:24px; position:relative; padding-left:32px; }
+        .timeline::before { content:''; position:absolute; left:13px; top:0; bottom:0; width:2px; background:linear-gradient(180deg,#7c5cfc44,#a78bfa33,transparent); border-radius:2px; }
+        .timeline-step { position:relative; padding-left:20px; opacity:0; transform:translateX(-20px); animation:slideIn 0.6s ease forwards; }
+        .timeline-step:nth-child(1){animation-delay:0.1s;} .timeline-step:nth-child(2){animation-delay:0.2s;} .timeline-step:nth-child(3){animation-delay:0.3s;} .timeline-step:nth-child(4){animation-delay:0.4s;} .timeline-step:nth-child(5){animation-delay:0.5s;}
+        @keyframes slideIn { to{opacity:1; transform:translateX(0);} }
+        .timeline-step::before { content:''; position:absolute; left:-21px; top:6px; width:12px; height:12px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent); border:3px solid #12121d; z-index:2; }
+        .step-title { font-weight:700; color:#e0d8ff; font-size:1rem; }
+        .step-desc { color:var(--text3); font-size:0.9rem; }
+
+        /* Contact */
+        .contact-row { display:flex; gap:16px; flex-wrap:wrap; }
+        .contact-card { flex:1; min-width:180px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:22px 18px; text-align:center; transition:var(--transition); text-decoration:none; color:var(--text); }
+        .contact-card:hover { border-color:var(--accent); box-shadow:0 12px 28px #7c5cfc15; transform:translateY(-4px); }
+        .contact-icon { font-size:2.2rem; margin-bottom:10px; color:var(--accent2); }
+        .contact-label { font-weight:700; font-size:1rem; color:#e0d8ff; }
+        .contact-value { color:var(--text3); font-size:0.9rem; word-break:break-all; }
+
+        footer { text-align:center; padding:30px 20px; color:var(--text3); border-top:1px solid var(--border); margin-top:20px; font-size:0.85rem; }
+
+        .reveal { opacity:0; transform:translateY(28px); transition:opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+
+        @media(max-width:600px){
+            .navbar{flex-direction:column; gap:12px; border-radius:28px;}
+            .nav-links{gap:14px; flex-wrap:wrap; justify-content:center;}
+            .hero{padding:40px 12px 30px;}
+            section{padding:22px 16px;}
+            .info-grid{grid-template-columns:repeat(2,1fr);}
+            .projects-grid{grid-template-columns:1fr;}
+            .services-grid{grid-template-columns:repeat(2,1fr);}
+            .contact-row{flex-direction:column;}
+        }
+    </style>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <canvas id="particles"></canvas>
+
+    <div class="container">
+        <!-- Navbar -->
+        <nav class="navbar reveal">
+            <a href="#" class="nav-logo">
+                <img src="dev.png" alt="Nexora logo">
+                Nexora
+            </a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#packages">Packages</a></li>
+                <li><a href="#story">Story</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero -->
+        <header class="hero reveal">
+            <img src="img.jpg" alt="Fikir Habtamu" class="hero-avatar">
+            <h1>Fikir Habtamu</h1>
+            <p class="tagline">Student · Web Developer · Founder of <strong>Nexora</strong></p>
+            <p class="bio-short">"17-year-old developer from Ethiopia building creative digital projects and growing Nexora into a future technology brand."</p>
+            <div class="badge-group">
+                <span class="badge"><span class="badge-icon"></span> Ethiopia</span>
+                <span class="badge"><span class="badge-icon"></span> Grade 11</span>
+                <span class="badge"><span class="badge-icon"></span> Web Developer</span>
+                <span class="badge"><span class="badge-icon"></span> Nexora Founder</span>
+            </div>
+        </header>
+
+        <!-- About -->
+        <section id="about" class="reveal">
+            <div class="section-title"><span class="title-icon">&#9671;</span> About Me<span class="title-line"></span></div>
+            <p style="color:var(--text2); margin-bottom:18px;">
+                I am a 17-year-old Grade 11 student from Ethiopia passionate about technology, programming, creativity, and digital innovation. I build websites, explore AI tools, and create online projects while constantly improving my skills in web development, UI/UX design, Firebase, and frontend technologies.
+            </p>
+            <div class="info-grid">
+                <div class="info-card"><div class="info-label">Name</div><div class="info-value">Fikir Habtamu</div></div>
+                <div class="info-card"><div class="info-label">Age</div><div class="info-value">17</div></div>
+                <div class="info-card"><div class="info-label">Country</div><div class="info-value">Ethiopia</div></div>
+                <div class="info-card"><div class="info-label">Education</div><div class="info-value">Grade 11</div></div>
+                <div class="info-card"><div class="info-label">School</div><div class="info-value">Seden Adea Secondary</div></div>
+                <div class="info-card"><div class="info-label">Languages</div><div class="info-value">Oromo, Amharic, English</div></div>
+            </div>
+        </section>
+
+        <!-- Skills -->
+        <section id="skills" class="reveal">
+            <div class="section-title"><span class="title-icon">&#9881;</span> Technical Skills<span class="title-line"></span></div>
+            <div class="skill-item"><div class="skill-header"><span>HTML5</span><span class="skill-percent">90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>CSS3</span><span class="skill-percent">88%</span></div><div class="skill-bar"><div class="skill-fill" data-width="88"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>JavaScript</span><span class="skill-percent">75%</span></div><div class="skill-bar"><div class="skill-fill" data-width="75"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>Responsive Design</span><span class="skill-percent">92%</span></div><div class="skill-bar"><div class="skill-fill" data-width="92"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>Firebase</span><span class="skill-percent">72%</span></div><div class="skill-bar"><div class="skill-fill" data-width="72"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>UI/UX Design</span><span class="skill-percent">85%</span></div><div class="skill-bar"><div class="skill-fill" data-width="85"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>React (Beginner)</span><span class="skill-percent">50%</span></div><div class="skill-bar"><div class="skill-fill" data-width="50"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>Telegram Bot Dev</span><span class="skill-percent">65%</span></div><div class="skill-bar"><div class="skill-fill" data-width="65"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>AI Integration</span><span class="skill-percent">58%</span></div><div class="skill-bar"><div class="skill-fill" data-width="58"></div></div></div>
+            <div class="skill-item"><div class="skill-header"><span>Creative Web Design</span><span class="skill-percent">93%</span></div><div class="skill-bar"><div class="skill-fill" data-width="93"></div></div></div>
+        </section>
+
+        <!-- Projects -->
+        <section id="projects" class="reveal">
+            <div class="section-title"><span class="title-icon">&#10070;</span> Recent Projects<span class="title-line"></span></div>
+            <div class="projects-grid">
+                <div class="project-card"><div class="project-icon">&#9632;</div><div class="project-title">Portfolio Websites</div><div class="project-desc">Clean, responsive personal brand sites with modern aesthetics.</div></div>
+                <div class="project-card"><div class="project-icon">&#9737;</div><div class="project-title">School Web Systems</div><div class="project-desc">Interactive platforms for events, announcements & student resources.</div></div>
+                <div class="project-card"><div class="project-icon">&#9993;</div><div class="project-title">Telegram Bots</div><div class="project-desc">Automated bots for notifications, FAQs, and order management.</div></div>
+                <div class="project-card"><div class="project-icon">&#9733;</div><div class="project-title">Firebase Auth Sites</div><div class="project-desc">Secure login, user profiles, and real-time database integration.</div></div>
+                <div class="project-card"><div class="project-icon">&#9730;</div><div class="project-title">Online Product & Order</div><div class="project-desc">E-commerce style stores with product listings and checkout flows.</div></div>
+                <div class="project-card"><div class="project-icon">&#9783;</div><div class="project-title">AI Q&A Platform</div><div class="project-desc">Student-focused question answering system powered by AI APIs.</div></div>
+                <div class="project-card"><div class="project-icon">&#9776;</div><div class="project-title">Mobile-Friendly Apps</div><div class="project-desc">Web apps optimized for flawless experience on any device.</div></div>
+                <div class="project-card"><div class="project-icon">&#9864;</div><div class="project-title">Browser Games</div><div class="project-desc">Fun HTML/CSS/JS games built from scratch with original logic.</div></div>
+                <div class="project-card"><div class="project-icon">&#10022;</div><div class="project-title">Live Code Playground</div><div class="project-desc">Real-time HTML/CSS/JS editor with instant live preview.</div></div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="reveal">
+            <div class="section-title"><span class="title-icon">&#10045;</span> Digital Services<span class="title-line"></span></div>
+            <div class="services-grid">
+                <div class="service-card"><div class="service-symbol">&#9733;</div><div class="service-name">Telegram Premium</div></div>
+                <div class="service-card"><div class="service-symbol">&#10054;</div><div class="service-name">PUBG UC</div></div>
+                <div class="service-card"><div class="service-symbol">&#9670;</div><div class="service-name">Free Fire Diamonds</div></div>
+                <div class="service-card"><div class="service-symbol">&#9830;</div><div class="service-name">Other Game Coins</div></div>
+                <div class="service-card"><div class="service-symbol">&#9734;</div><div class="service-name">Telegram Stars</div></div>
+                <div class="service-card"><div class="service-symbol">&#9763;</div><div class="service-name">USDT ($)</div></div>
+                <div class="service-card"><div class="service-symbol">&#9775;</div><div class="service-name">TikTok Coins</div></div>
+                <div class="service-card"><div class="service-symbol">&#10031;</div><div class="service-name">Group/Channel Growth</div></div>
+                <div class="service-card"><div class="service-symbol">&#9881;</div><div class="service-name">Bot/Website Dev</div></div>
+                <div class="service-card"><div class="service-symbol">&#10059;</div><div class="service-name">Telegram NFT</div></div>
+                <div class="service-card"><div class="service-symbol">&#9829;</div><div class="service-name">Tinder Account</div></div>
+                <div class="service-card"><div class="service-symbol">&#9883;</div><div class="service-name">Social Media Boost</div></div>
+                <div class="service-card"><div class="service-symbol">&#10132;</div><div class="service-name">IG/TikTok Followers & Views</div></div>
+                <div class="service-card"><div class="service-symbol">&#10042;</div><div class="service-name">And much more...</div></div>
+            </div>
+        </section>
+
+        <!-- Packages Section with pack.jpg -->
+        <section id="packages" class="reveal">
+            <div class="section-title"><span class="title-icon">&#10003;</span> Website Development Packages<span class="title-line"></span></div>
+            <img src="pack.jpg" alt="Development Packages" class="package-img">
+            <p style="text-align:center; color:var(--text2); margin-top:12px;">All-in-one packages tailored to your needs — click to view details.</p>
+        </section>
+
+        <!-- Nexora Highlight -->
+        <div class="nexora-highlight reveal">
+            <div class="nexora-name">Nexora</div>
+            <p class="nexora-desc">
+                A creative web development brand I'm building to deliver modern, professional digital experiences — websites, tools, platforms, and online services. Nexora stands for creativity, technology, and continuous improvement.
+            </p>
+        </div>
+
+        <!-- Story Timeline -->
+        <section id="story" class="reveal">
+            <div class="section-title"><span class="title-icon">&#9738;</span> My Journey & Goals<span class="title-line"></span></div>
+            <div class="timeline">
+                <div class="timeline-step"><div class="step-title">The Start</div><div class="step-desc">Discovered coding in Ethiopia and fell in love with building things on the web.</div></div>
+                <div class="timeline-step"><div class="step-title">Skill Building</div><div class="step-desc">Mastered HTML, CSS, JavaScript, Firebase, and UI/UX through hands-on projects.</div></div>
+                <div class="timeline-step"><div class="step-title">Nexora is Born</div><div class="step-desc">Founded Nexora to turn my creative ideas into impactful digital solutions.</div></div>
+                <div class="timeline-step"><div class="step-title">Future Vision</div><div class="step-desc">Become a software engineer & entrepreneur, build AI-powered platforms, and grow Nexora globally.</div></div>
+                <div class="timeline-step"><div class="step-title">Inspire Others</div><div class="step-desc">Show young African developers that age is just a number — creativity and code can change the world.</div></div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="reveal">
+            <div class="section-title"><span class="title-icon">&#9743;</span> Get In Touch<span class="title-line"></span></div>
+            <div class="contact-row">
+                <a href="https://t.me/NexoraET" target="_blank" rel="noopener" class="contact-card">
+                    <div class="contact-icon">&#9993;</div>
+                    <div class="contact-label">Telegram</div>
+                    <div class="contact-value">@NexoraET</div>
+                </a>
+                <a href="tel:+251940099073" class="contact-card">
+                    <div class="contact-icon">&#9742;</div>
+                    <div class="contact-label">Phone</div>
+                    <div class="contact-value">0940099073</div>
+                </a>
+                <div class="contact-card">
+                    <div class="contact-icon">&#9906;</div>
+                    <div class="contact-label">Location</div>
+                    <div class="contact-value">Ethiopia</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Designed & built by <strong>Fikir Habtamu</strong> · Founder of <strong>Nexora</strong></p>
+            <p style="margin-top:4px;">© 2025 Nexora — learning, building, evolving.</p>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let w, h;
+
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        resize();
+        window.addEventListener('resize', () => { resize(); initParticles(); });
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * w; this.y = Math.random() * h;
+                this.r = Math.random() * 1.6 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.5 + 0.15;
+                this.opacitySpeed = (Math.random() - 0.5) * 0.004;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                this.opacity += this.opacitySpeed;
+                if (this.opacity > 0.65 || this.opacity < 0.1) this.opacitySpeed *= -1;
+                if (this.x < -20) this.x = w + 20; if (this.x > w + 20) this.x = -20;
+                if (this.y < -20) this.y = h + 20; if (this.y > h + 20) this.y = -20;
+            }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(170,150,220,${this.opacity})`; ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            const count = Math.min(Math.floor((w * h) / 12000), 140);
+            particles = [];
+            for (let i = 0; i < count; i++) particles.push(new Particle());
+        }
+        initParticles();
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, w, h);
+            particles.forEach(p => { p.update(); p.draw(); });
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 90) {
+                        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(140,120,200,${0.05 * (1 - dist / 90)})`; ctx.lineWidth = 0.4; ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
+        revealElements.forEach(el => observer.observe(el));
+
+        const skillFills = document.querySelectorAll('.skill-fill');
+        const skillObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bar = entry.target;
+                    bar.style.width = bar.getAttribute('data-width') + '%';
+                }
+            });
+        }, { threshold: 0.3 });
+        skillFills.forEach(bar => skillObserver.observe(bar));
+    </script>
+</body>
+</html>
