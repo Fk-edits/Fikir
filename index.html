@@ -12,32 +12,48 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        /* CSS Variables for Dark Mode (Default) */
         :root {
-            /* Premium Dark Theme Colors */
-            --bg: #050508;
-            --surface: #0a0a10;
-            --surface2: #12121c;
-            --surface-glass: rgba(18, 18, 28, 0.7);
-            
+            --bg: #0a0a10;
+            --surface: #12121d;
+            --surface2: #1a1a2b;
+            --surface-glass: rgba(18, 18, 29, 0.85);
             --accent: #7c5cfc;
             --accent-hover: #9074ff;
             --accent2: #a78bfa;
             --accent-soft: rgba(124, 92, 252, 0.15);
-            
-            --text: #f4f4f9;
-            --text2: #a1a1ba;
-            --text3: #757591;
-            
+            --text: #eaeaf2;
+            --text2: #b0b0c5;
+            --text3: #8888a5;
             --border: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(124, 92, 252, 0.4);
-            
             --radius-lg: 24px;
-            --radius: 16px;
-            --radius-sm: 10px;
-            
-            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            --shadow-glow: 0 0 20px rgba(124, 92, 252, 0.2);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+            --shadow-glow: 0 0 24px rgba(124, 92, 252, 0.2);
+            --modal-bg: rgba(0, 0, 0, 0.85);
+        }
+
+        /* CSS Variables for Light Mode */
+        body.light-mode {
+            --bg: #f5f5f7;
+            --surface: #ffffff;
+            --surface2: #f9f9fb;
+            --surface-glass: rgba(255, 255, 255, 0.85);
+            --accent: #6b4ce6;
+            --accent-hover: #5a3bc2;
+            --accent2: #8a6be8;
+            --accent-soft: rgba(107, 76, 230, 0.1);
+            --text: #1a1a24;
+            --text2: #4a4a5a;
+            --text3: #6b6b7b;
+            --border: rgba(0, 0, 0, 0.08);
+            --border-hover: rgba(107, 76, 230, 0.3);
+            --shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 8px 24px rgba(107, 76, 230, 0.15);
+            --modal-bg: rgba(255, 255, 255, 0.85);
         }
 
         * {
@@ -46,9 +62,7 @@
             box-sizing: border-box;
         }
 
-        html { 
-            scroll-behavior: smooth; 
-        }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -57,479 +71,471 @@
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
         /* Background Effects */
         .orb {
             position: fixed;
             border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.15;
+            filter: blur(130px);
+            opacity: 0.14;
             pointer-events: none;
             z-index: 0;
-            animation: orbDrift 20s infinite alternate ease-in-out;
+            animation: orbDrift 22s infinite alternate ease-in-out;
+            transition: opacity 0.5s ease;
         }
-        .orb-1 { width: 50vw; height: 50vw; max-width: 600px; max-height: 600px; background: #7c5cfc; top: -10%; left: -10%; }
-        .orb-2 { width: 40vw; height: 40vw; max-width: 500px; max-height: 500px; background: #3b2a82; bottom: -10%; right: -5%; animation-delay: -5s; animation-duration: 25s; }
+        body.light-mode .orb { opacity: 0.08; }
+        .orb-1 { width: 600px; height: 600px; background: #7c5cfc; top: -15%; left: -10%; }
+        .orb-2 { width: 450px; height: 450px; background: #5c8cfc; bottom: -10%; right: -8%; animation-delay: -5s; animation-duration: 25s; }
+        .orb-3 { width: 380px; height: 380px; background: #a78bfa; top: 60%; left: 55%; animation-delay: -12s; animation-duration: 20s; }
         
         @keyframes orbDrift {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, -50px) scale(1.1); }
+            100% { transform: translate(80px, -60px) scale(1.15); }
         }
 
         canvas#particles {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.45;
+            transition: opacity 0.5s ease;
         }
+        body.light-mode canvas#particles { opacity: 0.2; }
 
-        .container { 
-            position: relative; 
-            z-index: 1; 
-            max-width: 1100px; 
-            margin: 0 auto; 
-            padding: 0 24px 60px; 
-        }
+        .container { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 20px 24px; }
 
         /* Buttons */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
             padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.95rem;
             text-decoration: none; transition: var(--transition); cursor: pointer; border: none;
+            font-family: inherit; outline: none;
         }
         .btn-primary {
-            background: var(--accent); color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover)); color: #fff;
             box-shadow: 0 4px 14px rgba(124, 92, 252, 0.3);
         }
         .btn-primary:hover {
-            background: var(--accent-hover); transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(124, 92, 252, 0.4);
+            transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124, 92, 252, 0.4);
         }
         .btn-secondary {
             background: var(--surface2); color: var(--text); border: 1px solid var(--border);
         }
         .btn-secondary:hover {
-            background: var(--surface-glass); border-color: var(--accent); color: #fff;
+            background: var(--surface); border-color: var(--accent); color: var(--accent); box-shadow: var(--shadow-glow);
         }
+        body.light-mode .btn-secondary:hover { color: #fff; background: var(--accent); }
 
         /* Navbar */
         .navbar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 28px; background: var(--surface-glass); backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 100px; margin-top: 24px;
-            position: sticky; top: 20px; z-index: 100; box-shadow: var(--shadow);
+            padding: 14px 24px; background: var(--surface-glass); backdrop-filter: blur(18px);
+            border: 1px solid var(--border); border-radius: 60px; margin-top: 16px;
+            position: sticky; top: 16px; z-index: 100; box-shadow: var(--shadow);
             transition: var(--transition);
         }
-        .nav-logo { 
-            display: flex; align-items: center; gap: 12px; font-weight: 800; 
-            font-size: 1.25rem; color: #fff; text-decoration: none; letter-spacing: -0.5px;
-        }
-        .nav-logo img { height: 32px; width: auto; border-radius: 8px; }
-        .nav-links { display: flex; gap: 28px; list-style: none; }
-        .nav-links a { 
-            color: var(--text2); text-decoration: none; font-weight: 500; font-size: 0.9rem; 
+        .navbar:hover { border-color: var(--border-hover); }
+        .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.4rem; color: var(--text); text-decoration: none; }
+        .nav-logo img { height: 44px; width: auto; border-radius: 8px; } 
+        .nav-links { display: flex; align-items: center; gap: 22px; list-style: none; }
+        .nav-links a { color: var(--text2); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color var(--transition); position: relative; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--accent); border-radius: 2px; transition: width var(--transition); }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a:hover::after { width: 100%; }
+        
+        .theme-toggle {
+            background: none; border: none; color: var(--text2); cursor: pointer; display: flex;
+            align-items: center; justify-content: center; padding: 8px; border-radius: 50%;
             transition: var(--transition);
         }
-        .nav-links a:hover { color: #fff; }
-        .menu-toggle { display: none; background: none; border: none; color: #fff; cursor: pointer; }
+        .theme-toggle:hover { color: var(--accent); background: var(--surface2); }
 
         /* Hero */
-        .hero { text-align: center; padding: 100px 20px 80px; }
+        .hero { text-align: center; padding: 60px 20px 40px; }
         .hero-avatar {
-            width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
-            border: 2px solid var(--border); padding: 4px; background: var(--surface);
-            box-shadow: var(--shadow-glow); margin: 0 auto 24px;
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--accent); box-shadow: 0 0 70px var(--accent-soft), 0 0 140px rgba(124, 92, 252, 0.1);
+            margin: 0 auto 20px; animation: avatarGlow 4s infinite alternate; transition: transform 0.3s;
         }
-        .hero h1 { 
-            font-size: clamp(2.5rem, 6vw, 4.2rem); font-weight: 800; letter-spacing: -1.5px; 
-            background: linear-gradient(135deg, #fff, #c9b8ff, #7c5cfc); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            margin-bottom: 12px; line-height: 1.1;
-        }
+        .hero-avatar:hover { transform: scale(1.05); }
+        @keyframes avatarGlow { 0% { box-shadow: 0 0 50px var(--accent-soft); } 100% { box-shadow: 0 0 90px rgba(167, 139, 250, 0.4); } }
+        .hero h1 { font-size: clamp(2.4rem, 7vw, 3.8rem); font-weight: 800; letter-spacing: -1.5px; color: var(--text); margin-bottom: 6px; }
         .hero .tagline { font-size: 1.2rem; color: var(--accent2); font-weight: 500; margin-bottom: 16px; }
-        .hero .bio-short { 
-            font-size: 1.05rem; color: var(--text2); max-width: 600px; 
-            margin: 0 auto 32px; line-height: 1.7; 
-        }
-        .hero-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .hero .bio-short { font-size: 1.1rem; color: var(--text2); max-width: 650px; margin: 0 auto 24px; line-height: 1.7; }
+        .hero-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
 
-        /* Sections General */
-        section {
-            margin: 60px 0; padding: 40px; background: linear-gradient(180deg, var(--surface), var(--surface2)); 
-            border: 1px solid var(--border); border-radius: var(--radius-lg); 
+        /* General Sections */
+        section, .nexora-highlight {
+            margin: 40px 0; padding: 40px; background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); transition: border-color 0.3s, box-shadow 0.3s, background 0.3s; 
             position: relative; overflow: hidden;
         }
-        .section-title { 
-            font-size: 1.8rem; font-weight: 700; margin-bottom: 32px; 
-            display: flex; align-items: center; gap: 14px; letter-spacing: -0.5px; color: #fff;
-        }
-        .title-icon { color: var(--accent); display: flex; align-items: center; }
-        .title-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+        section:hover, .nexora-highlight:hover { border-color: var(--border-hover); box-shadow: var(--shadow-glow); }
+        .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
+        .title-icon { color: var(--accent2); display: flex; align-items: center; }
+        .title-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); border-radius: 1px; }
 
-        /* Portfolio Grid */
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        /* Hidden Projects Reveal Section */
+        .explore-wrapper { text-align: center; padding: 20px 0; }
+        .explore-desc { color: var(--text2); max-width: 600px; margin: 0 auto 24px; font-size: 1.05rem; }
+        
+        .projects-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;
+            margin-top: 32px; max-height: 0; opacity: 0; overflow: hidden;
+            transition: max-height 0.8s ease, opacity 0.6s ease;
+        }
+        .projects-grid.expanded { max-height: 5000px; opacity: 1; padding-bottom: 20px; overflow: visible; }
+        
         .project-card { 
-            background: var(--surface); border: 1px solid var(--border); 
-            border-radius: var(--radius); overflow: hidden; transition: var(--transition);
-            display: flex; flex-direction: column;
+            background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); 
+            padding: 24px; transition: var(--transition); display: flex; flex-direction: column;
+            position: relative; overflow: hidden;
         }
-        .project-card:hover { 
-            border-color: var(--border-hover); transform: translateY(-6px); box-shadow: var(--shadow-glow); 
+        .project-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2)); opacity: 0; transition: var(--transition);
         }
-        .project-img-wrapper {
-            position: relative; width: 100%; padding-top: 56.25%; /* 16:9 */
-            background: #1a1a24; border-bottom: 1px solid var(--border); overflow: hidden;
-        }
-        .project-img-wrapper i {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: var(--text3); width: 48px; height: 48px;
-        }
-        .project-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
-        .project-badge { 
-            display: inline-block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-            color: var(--accent2); background: var(--accent-soft); padding: 4px 10px; 
-            border-radius: 100px; margin-bottom: 12px; align-self: flex-start;
-        }
-        .project-title { font-weight: 700; font-size: 1.25rem; color: #fff; margin-bottom: 8px; }
+        .project-card:hover { border-color: var(--border-hover); transform: translateY(-5px); box-shadow: var(--shadow-glow); }
+        .project-card:hover::before { opacity: 1; }
+        
+        .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .project-icon { padding: 12px; background: var(--accent-soft); border-radius: var(--radius-sm); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+        .project-type { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); }
+        .project-title { font-weight: 700; font-size: 1.25rem; color: var(--text); margin-bottom: 12px; }
         .project-desc { font-size: 0.9rem; color: var(--text2); line-height: 1.5; margin-bottom: 24px; flex-grow: 1; }
-        .project-actions { display: flex; gap: 12px; }
+        .project-actions { display: flex; gap: 12px; margin-top: auto; }
         
-        /* Featured Projects Specifics */
-        .featured-project { grid-column: 1 / -1; display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; }
-        .featured-project .project-img-wrapper { padding-top: 0; height: 100%; min-height: 300px; border-bottom: none; border-right: 1px solid var(--border); }
-        .featured-project .project-content { padding: 40px; justify-content: center; }
-        .featured-project .project-title { font-size: 1.8rem; }
-
-        .hidden-projects { display: none; margin-top: 24px; }
-        .hidden-projects.visible { display: grid; animation: fadeIn 0.6s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .show-more-container { text-align: center; margin-top: 40px; }
-
-        /* Pricing Section */
-        .pricing-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; align-items: start;
-        }
-        .price-card {
-            background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 32px 24px; transition: var(--transition); position: relative;
-            display: flex; flex-direction: column; height: 100%;
-        }
-        .price-card:hover { border-color: var(--accent); box-shadow: var(--shadow-glow); transform: translateY(-4px); }
-        .price-card.popular { border-color: rgba(124, 92, 252, 0.5); background: linear-gradient(180deg, rgba(124, 92, 252, 0.05), var(--surface2)); }
-        .popular-badge {
-            position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
-            background: var(--accent); color: #fff; font-size: 0.75rem; font-weight: 700;
-            padding: 4px 16px; border-radius: 100px; text-transform: uppercase; letter-spacing: 1px;
-        }
-        .price-name { font-size: 1.1rem; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
-        .price-amount { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 24px; }
-        .price-amount span { font-size: 1rem; font-weight: 500; color: var(--text3); }
-        .price-features { list-style: none; margin-bottom: 32px; flex-grow: 1; }
-        .price-features li {
-            display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: var(--text2); margin-bottom: 12px;
-        }
-        .price-features i { color: var(--accent2); flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; }
-        .price-btn { width: 100%; justify-content: center; }
-
-        /* Services */
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-        .service-card {
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 24px;
-            border-radius: var(--radius-sm); transition: var(--transition);
-        }
-        .service-card:hover { background: var(--surface2); border-color: var(--border-hover); }
-        .service-icon { color: var(--accent); margin-bottom: 16px; width: 32px; height: 32px; }
-        .service-title { font-weight: 600; font-size: 1.05rem; color: #fff; margin-bottom: 8px; }
-        .service-desc { font-size: 0.85rem; color: var(--text3); }
-
-        /* About & Skills */
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 24px; }
-        .info-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; }
-        .info-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; font-weight: 600; }
-        .info-value { font-weight: 600; font-size: 1rem; color: #fff; }
-        
-        .skills-container { margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
-        .skill-item { margin-bottom: 16px; }
-        .skill-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; color: #fff; }
-        .skill-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 100px; overflow: hidden; }
-        .skill-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 100px; transition: width 1.5s ease-out; }
-
-        /* Story Timeline */
-        .timeline { display: flex; flex-direction: column; gap: 32px; position: relative; padding-left: 24px; margin-top: 24px; }
-        .timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: var(--border); }
-        .timeline-step { position: relative; opacity: 0; transform: translateX(-20px); animation: slideIn 0.6s ease forwards; }
-        .timeline-step::before { 
-            content: ''; position: absolute; left: -24px; top: 4px; width: 16px; height: 16px; 
-            border-radius: 50%; background: var(--surface); border: 3px solid var(--accent); z-index: 2; 
-        }
-        .step-title { font-weight: 700; color: #fff; font-size: 1.1rem; margin-bottom: 4px; }
-        .step-desc { color: var(--text2); font-size: 0.95rem; line-height: 1.5; }
-
-        /* Contact */
-        .contact-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .contact-card { 
-            background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); 
-            padding: 24px; text-align: center; transition: var(--transition); text-decoration: none; display: block;
-        }
-        .contact-card:hover { border-color: var(--accent); transform: translateY(-4px); background: rgba(124, 92, 252, 0.05); }
-        .contact-card i { color: var(--accent); width: 32px; height: 32px; margin-bottom: 12px; }
-        .contact-label { font-weight: 700; font-size: 1.05rem; color: #fff; margin-bottom: 4px; }
-        .contact-value { color: var(--text2); font-size: 0.9rem; }
-
-        /* Footer */
-        footer { text-align: center; padding: 40px 20px; color: var(--text3); border-top: 1px solid var(--border); margin-top: 40px; font-size: 0.9rem; }
-        .footer-brand { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; color: #fff; font-weight: 700; }
-        
-        /* Modal for Live Preview */
+        /* Modal */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: blur(10px);
             z-index: 1000; display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 20px;
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-content {
-            background: var(--surface); width: 100%; max-width: 1400px; height: 90vh;
-            border-radius: var(--radius); border: 1px solid var(--border); display: flex; flex-direction: column;
-            overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7); transform: scale(0.95); transition: transform 0.3s ease;
+            background: var(--surface); width: 100%; max-width: 1200px; height: 85vh;
+            border-radius: var(--radius-lg); border: 1px solid var(--border); display: flex; flex-direction: column;
+            overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: scale(0.98); transition: transform 0.3s ease;
         }
         .modal-overlay.active .modal-content { transform: scale(1); }
         .modal-header {
             padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex;
             justify-content: space-between; align-items: center; background: var(--surface2);
         }
-        .modal-title { font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .modal-controls { display: flex; gap: 12px; }
+        .modal-title-area { display: flex; flex-direction: column; }
+        .modal-title { font-weight: 700; color: var(--text); font-size: 1.1rem; }
+        .modal-subtitle { font-size: 0.8rem; color: var(--text3); }
+        .modal-controls { display: flex; gap: 12px; align-items: center; }
         .iframe-container { flex-grow: 1; position: relative; background: #fff; }
-        .iframe-placeholder {
+        .iframe-loader {
             position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: var(--surface); color: var(--text2); text-align: center; padding: 40px; z-index: 1;
+            background: var(--surface); color: var(--text); z-index: 1;
         }
-        .iframe-placeholder i { width: 48px; height: 48px; margin-bottom: 16px; color: var(--text3); animation: pulse 2s infinite; }
-        .modal-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 2; background: transparent; }
+        .spinner { animation: spin 1s linear infinite; margin-bottom: 16px; color: var(--accent); }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .modal-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; z-index: 2; }
 
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        /* Services Grid */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .service-card {
+            background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); 
+            padding: 24px; transition: var(--transition);
+        }
+        .service-card:hover { border-color: var(--border-hover); transform: translateY(-3px); box-shadow: var(--shadow-glow); }
+        .service-symbol { color: var(--accent2); margin-bottom: 16px; display: inline-block; padding: 12px; background: var(--accent-soft); border-radius: 50%; }
+        .service-name { font-weight: 700; font-size: 1.05rem; color: var(--text); margin-bottom: 8px; }
+        .service-desc { font-size: 0.85rem; color: var(--text3); line-height: 1.5; }
 
-        /* Reveal utility */
-        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        /* Pricing Section */
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: stretch; margin-bottom: 24px; }
+        .price-card {
+            background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 32px 24px; transition: var(--transition); display: flex; flex-direction: column; position: relative;
+        }
+        .price-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: var(--shadow-glow); }
+        .price-card.popular { border-color: rgba(124, 92, 252, 0.6); background: linear-gradient(180deg, var(--accent-soft), var(--surface2)); }
+        .price-card.exclusive { border-color: rgba(167, 139, 250, 0.4); }
+        
+        .popular-badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff;
+            font-size: 0.75rem; font-weight: 700; padding: 4px 16px; border-radius: 100px;
+            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(124,92,252,0.4);
+        }
+        
+        .price-header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px; text-align: center; }
+        .price-name { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .price-amount { font-size: 2.2rem; font-weight: 800; color: var(--text); }
+        .price-amount span { font-size: 1rem; font-weight: 500; color: var(--text3); }
+        
+        .price-features { list-style: none; flex-grow: 1; margin-bottom: 24px; }
+        .price-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: var(--text2); margin-bottom: 14px; }
+        .price-features i { color: var(--accent); flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; }
+        
+        .price-note { text-align: center; font-size: 0.8rem; color: var(--text3); font-style: italic; }
+
+        /* Huge Contact Section */
+        .contact-section { padding: 60px 40px; }
+        .contact-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 32px; }
+        .contact-card {
+            background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 40px 24px; text-align: center; transition: var(--transition); text-decoration: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .contact-card:hover { border-color: var(--accent); background: var(--surface); box-shadow: var(--shadow-glow); transform: translateY(-5px); }
+        .contact-icon-wrapper {
+            width: 70px; height: 70px; background: var(--accent-soft); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+            color: var(--accent); transition: var(--transition);
+        }
+        .contact-card:hover .contact-icon-wrapper { background: var(--accent); color: #fff; transform: scale(1.1); box-shadow: 0 10px 20px rgba(124,92,252,0.3); }
+        .contact-label { font-weight: 700; font-size: 1.2rem; color: var(--text); margin-bottom: 8px; }
+        .contact-value { color: var(--text2); font-size: 1rem; font-weight: 500; }
+
+        /* Info Grid & Timeline (About/Story) */
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-top: 24px; }
+        .info-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px 16px; text-align: center; }
+        .info-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3); margin-bottom: 6px; font-weight: 600; }
+        .info-value { font-weight: 700; font-size: 1.1rem; color: var(--text); }
+        
+        .timeline { display: flex; flex-direction: column; gap: 32px; position: relative; padding-left: 32px; margin-top: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--accent), transparent); border-radius: 2px; }
+        .timeline-step { position: relative; padding-left: 20px; }
+        .timeline-step::before {
+            content: ''; position: absolute; left: -25px; top: 4px; width: 16px; height: 16px; border-radius: 50%;
+            background: var(--surface); border: 3px solid var(--accent); z-index: 2; box-shadow: 0 0 10px var(--accent-soft);
+        }
+        .step-title { font-weight: 700; color: var(--text); font-size: 1.1rem; margin-bottom: 4px; }
+        .step-desc { color: var(--text2); font-size: 0.95rem; }
+
+        /* Nexora Highlight */
+        .nexora-highlight {
+            background: linear-gradient(135deg, var(--surface2), var(--surface)); border: 1px solid var(--accent-soft);
+            text-align: center;
+        }
+        .nexora-name { font-size: 2.8rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, #d4c5ff, #a78bfa, #7c5cfc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nexora-desc { color: var(--text2); margin-top: 12px; font-size: 1.05rem; max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+
+        footer { text-align: center; padding: 40px 20px; color: var(--text3); border-top: 1px solid var(--border); margin-top: 20px; font-size: 0.9rem; }
+        .footer-brand { display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .reveal.visible { opacity: 1; transform: translateY(0); }
 
-        /* Responsive */
         @media(max-width: 768px) {
-            .navbar { padding: 12px 20px; border-radius: 16px; }
-            .nav-links { display: none; } /* Kept simple for space, can implement full mobile menu if needed */
-            .menu-toggle { display: block; }
-            .hero { padding: 80px 16px 40px; }
-            section { padding: 32px 20px; margin: 40px 0; }
-            .featured-project { grid-template-columns: 1fr; }
-            .featured-project .project-img-wrapper { min-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
-            .modal-content { height: 100vh; border-radius: 0; }
+            .navbar { padding: 12px 20px; border-radius: 28px; }
+            .nav-links { display: none; } /* Kept clean on mobile, toggle handles theme */
+            .hero { padding: 40px 16px 30px; }
+            section { padding: 32px 20px; }
+            .modal-content { height: 100vh; max-width: 100%; border-radius: 0; transform: scale(1); }
             .modal-overlay { padding: 0; }
+            .price-card { padding: 24px 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- Background Elements -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
     <canvas id="particles"></canvas>
 
     <div class="container">
         <!-- Navbar -->
         <nav class="navbar reveal">
             <a href="#" class="nav-logo">
-                <i data-lucide="code-xml"></i> Nexora
+                <i data-lucide="code-2"></i> Nexora
             </a>
             <ul class="nav-links">
-                <li><a href="#portfolio">Work</a></li>
+                <li><a href="#projects">Work</a></li>
                 <li><a href="#services">Services</a></li>
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <li>
+                    <button class="theme-toggle" id="theme-btn" aria-label="Toggle Theme">
+                        <i data-lucide="sun"></i>
+                    </button>
+                </li>
             </ul>
-            <button class="menu-toggle" onclick="document.getElementById('contact').scrollIntoView();"><i data-lucide="mail"></i></button>
         </nav>
 
-        <!-- Hero Section -->
+        <!-- Hero -->
         <header class="hero reveal">
-            <img src="img.jpg" alt="Fikir Habtamu" class="hero-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc1NzU5MSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iOCIgcj0iNSIvPjxwYXRoIGQ9Ik0yMCAyMXYtMmEyIDIgMCAwIDAtMi0yaC04YTIgMiAwIDAgMC0yIDJ2MiIvPjwvc3ZnPg=='">
+            <!-- Fallback image used if original img.jpg is missing -->
+            <img src="img.jpg" alt="Fikir Habtamu" class="hero-avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTAiIGhlaWdodD0iMTEwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4ODhhNSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0xOSA1Yy0xLjUgMC0yLjggMS40LTMuMSAyTDExIDEzVjdjMC0yLTIuNS0yLTMgMG0wIDEwYzAgMiAyLjUgMiAzIDBsNC45LTYiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjwvc3ZnPg=='">
             <h1>Fikir Habtamu</h1>
             <p class="tagline">Student | Web Developer | Founder of Nexora</p>
             <p class="bio-short">I build modern websites, full-stack platforms, and automated digital solutions that help businesses grow.</p>
             
             <div class="hero-actions">
-                <a href="#portfolio" class="btn btn-primary"><i data-lucide="layout-grid"></i> Explore My Work</a>
-                <a href="javascript:void(0)" onclick="generalInquiry()" class="btn btn-secondary"><i data-lucide="send"></i> Contact Me</a>
+                <a href="#projects" class="btn btn-primary"><i data-lucide="layout-grid"></i> Explore My Work</a>
+                <a href="#contact" class="btn btn-secondary"><i data-lucide="mail"></i> Contact Me</a>
             </div>
         </header>
 
-        <!-- Portfolio Section -->
-        <section id="portfolio" class="reveal">
-            <div class="section-title"><i data-lucide="monitor-smartphone" class="title-icon"></i> Featured Projects<div class="title-line"></div></div>
-            
-            <div class="projects-grid">
-                <!-- FEATURED 01: AHADU Flowers -->
-                <div class="project-card featured-project">
-                    <div class="project-img-wrapper">
-                        <i data-lucide="flower-2"></i>
-                    </div>
-                    <div class="project-content">
-                        <span class="project-badge">Full-Stack E-Commerce</span>
-                        <h3 class="project-title">AHADU Flowers</h3>
-                        <p class="project-desc">A full-stack flower shopping platform featuring a dynamic product catalog and an administrative dashboard for managing and publishing products. Built to deliver a polished online shopping experience with integrated product management functionality.</p>
-                        <div class="project-actions">
-                            <button class="btn btn-primary" onclick="openPreview('AHADU Flowers', 'https://ahaduflowers.web.app')"><i data-lucide="eye"></i> Live Preview</button>
-                            <a href="https://ahaduflowers.web.app" target="_blank" rel="noopener noreferrer" class="btn btn-secondary"><i data-lucide="external-link"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FEATURED 02: Saden Smart School -->
-                <div class="project-card featured-project">
-                    <div class="project-img-wrapper">
-                        <i data-lucide="graduation-cap"></i>
-                    </div>
-                    <div class="project-content">
-                        <span class="project-badge">Full-Stack School System</span>
-                        <h3 class="project-title">Saden Smart School</h3>
-                        <p class="project-desc">A comprehensive school web system designed to bring academic resources and school services into one digital platform. Built to support school operations, educational content, student access, and administrative functionality.</p>
-                        <div class="project-actions">
-                            <button class="btn btn-primary" onclick="openPreview('Saden Smart School', 'https://sadensmartschool.vercel.app')"><i data-lucide="eye"></i> Live Preview</button>
-                            <a href="https://sadensmartschool.vercel.app" target="_blank" rel="noopener noreferrer" class="btn btn-secondary"><i data-lucide="external-link"></i></a>
-                        </div>
-                    </div>
-                </div>
+        <!-- Hidden Projects Section -->
+        <section id="projects" class="reveal">
+            <div class="explore-wrapper">
+                <div class="section-title" style="justify-content: center;"><i data-lucide="folder-code" class="title-icon"></i> Explore My Websites & Bots</div>
+                <p class="explore-desc">Discover my latest full-stack platforms, promotional websites, and automated Telegram bots designed to streamline digital experiences.</p>
+                <button id="toggle-projects-btn" class="btn btn-primary" onclick="toggleProjects()">
+                    <i data-lucide="eye"></i> Explore My Projects
+                </button>
             </div>
 
-            <!-- HIDDEN PROJECTS (Revealed via JS) -->
-            <div class="projects-grid hidden-projects" id="more-projects">
-                <!-- 03 Qal Gebeya -->
+            <!-- The Grid of 9 Projects -->
+            <div class="projects-grid" id="projects-container">
+                <!-- Project 1 -->
                 <div class="project-card">
-                    <div class="project-content">
-                        <span class="project-badge">Marketplace & Review</span>
-                        <h3 class="project-title">Qal Gebeya</h3>
-                        <p class="project-desc">A web-based marketplace review platform where users can explore businesses, rate their experiences, discover services, and access direct contact links.</p>
-                        <div class="project-actions" style="margin-top: auto;">
-                            <button class="btn btn-secondary" onclick="openPreview('Qal Gebeya', 'http://qalgebeya.vercel.app')" style="flex:1;"><i data-lucide="eye"></i> Preview</button>
-                            <a href="http://qalgebeya.vercel.app" target="_blank" class="btn btn-secondary"><i data-lucide="external-link"></i></a>
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon"><i data-lucide="shopping-bag"></i></div>
+                        <span class="project-type">Full-Stack E-Commerce</span>
+                    </div>
+                    <h3 class="project-title">AHADU Flowers</h3>
+                    <p class="project-desc">A flower shop platform with a dynamic product catalog and admin dashboard for managing and publishing products.</p>
+                    <div class="project-actions">
+                        <button class="btn btn-primary" style="flex:1" onclick="openPreview('AHADU Flowers', 'https://ahaduflowers.web.app', 'Full-Stack E-Commerce Website')"><i data-lucide="external-link"></i> Live Preview</button>
                     </div>
                 </div>
 
-                <!-- 04 Nate Online -->
+                <!-- Project 2 -->
                 <div class="project-card">
-                    <div class="project-content">
-                        <span class="project-badge">App Promotion</span>
-                        <h3 class="project-title">Nate Online</h3>
-                        <p class="project-desc">A promotional website for Hala featuring app invitation links and video content, designed to introduce visitors to the platform and make accessing the app simple.</p>
-                        <div class="project-actions" style="margin-top: auto;">
-                            <button class="btn btn-secondary" onclick="openPreview('Nate Online', 'http://nateonline.vercel.app')" style="flex:1;"><i data-lucide="eye"></i> Preview</button>
-                            <a href="http://nateonline.vercel.app" target="_blank" class="btn btn-secondary"><i data-lucide="external-link"></i></a>
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon"><i data-lucide="graduation-cap"></i></div>
+                        <span class="project-type">Full-Stack System</span>
+                    </div>
+                    <h3 class="project-title">Saden Smart School</h3>
+                    <p class="project-desc">A school platform designed to support school information and digital management features.</p>
+                    <div class="project-actions">
+                        <button class="btn btn-primary" style="flex:1" onclick="openPreview('Saden Smart School', 'https://sadensmartschool.vercel.app', 'Full-Stack School Management System')"><i data-lucide="external-link"></i> Live Preview</button>
                     </div>
                 </div>
 
-                <!-- 05 Hala -->
+                <!-- Project 3 -->
                 <div class="project-card">
-                    <div class="project-content">
-                        <span class="project-badge">Digital Marketing</span>
-                        <h3 class="project-title">Hala</h3>
-                        <p class="project-desc">A promotional platform for the Hala application, combining engaging video content and invitation links to introduce users to the app and encourage engagement.</p>
-                        <div class="project-actions" style="margin-top: auto;">
-                            <button class="btn btn-secondary" onclick="openPreview('Hala', 'https://fk-edits.github.io/hala/')" style="flex:1;"><i data-lucide="eye"></i> Preview</button>
-                            <a href="https://fk-edits.github.io/hala/" target="_blank" class="btn btn-secondary"><i data-lucide="external-link"></i></a>
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon"><i data-lucide="star"></i></div>
+                        <span class="project-type">Marketplace Review</span>
+                    </div>
+                    <h3 class="project-title">Qal Gebeya</h3>
+                    <p class="project-desc">A marketplace review page with ratings and contact links for exploring businesses and services.</p>
+                    <div class="project-actions">
+                        <button class="btn btn-secondary" style="flex:1" onclick="openPreview('Qal Gebeya', 'http://qalgebeya.vercel.app', 'Marketplace Review Website')"><i data-lucide="external-link"></i> Live Preview</button>
                     </div>
                 </div>
 
-                <!-- 06 Nati Market -->
+                <!-- Project 4 -->
                 <div class="project-card">
-                    <div class="project-content">
-                        <span class="project-badge">Frontend E-Commerce</span>
-                        <h3 class="project-title">Nati Market</h3>
-                        <p class="project-desc">A frontend-only marketplace demonstration showcasing product presentation, shopping interface design, and marketing-focused user experiences. (Frontend demo only).</p>
-                        <div class="project-actions" style="margin-top: auto;">
-                            <button class="btn btn-secondary" onclick="openPreview('Nati Market', 'https://fk-edits.github.io/Nati-market/')" style="flex:1;"><i data-lucide="eye"></i> Preview</button>
-                            <a href="https://fk-edits.github.io/Nati-market/" target="_blank" class="btn btn-secondary"><i data-lucide="external-link"></i></a>
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon"><i data-lucide="smartphone"></i></div>
+                        <span class="project-type">Promotional Site</span>
+                    </div>
+                    <h3 class="project-title">Nate Online</h3>
+                    <p class="project-desc">A promotional website featuring Hala app invite links and videos to introduce visitors to the platform.</p>
+                    <div class="project-actions">
+                        <button class="btn btn-secondary" style="flex:1" onclick="openPreview('Nate Online', 'http://nateonline.vercel.app', 'Hala App Promotional Website')"><i data-lucide="external-link"></i> Live Preview</button>
                     </div>
                 </div>
 
-                <!-- 07 ABM SMM -->
+                <!-- Project 5 -->
                 <div class="project-card">
-                    <div class="project-content">
-                        <span class="project-badge">SMM & Top-Up Platform</span>
-                        <h3 class="project-title">ABM SMM</h3>
-                        <p class="project-desc">A digital services and shopping platform featuring manual top-up workflows and online product purchasing, designed to support digital service orders and customer interactions.</p>
-                        <div class="project-actions" style="margin-top: auto;">
-                            <button class="btn btn-secondary" onclick="openPreview('ABM SMM', 'https://fk-edits.github.io/ABMsmm')" style="flex:1;"><i data-lucide="eye"></i> Preview</button>
-                            <a href="https://fk-edits.github.io/ABMsmm" target="_blank" class="btn btn-secondary"><i data-lucide="external-link"></i></a>
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon"><i data-lucide="megaphone"></i></div>
+                        <span class="project-type">Promotional Site</span>
+                    </div>
+                    <h3 class="project-title">Hala</h3>
+                    <p class="project-desc">A dedicated promotional experience featuring engaging Hala app-related content and interactive elements.</p>
+                    <div class="project-actions">
+                        <button class="btn btn-secondary" style="flex:1" onclick="openPreview('Hala', 'https://fk-edits.github.io/hala/', 'Promotional Website')"><i data-lucide="external-link"></i> Live Preview</button>
                     </div>
                 </div>
 
-                <!-- 08 YAB Top-Up Bot -->
+                <!-- Project 6 -->
+                <div class="project-card" style="border-color: rgba(255, 170, 0, 0.3);">
+                    <div class="project-header">
+                        <div class="project-icon" style="background: rgba(255, 170, 0, 0.1); color: #ffaa00;"><i data-lucide="layout"></i></div>
+                        <span class="project-type">Frontend-Only Demo</span>
+                    </div>
+                    <h3 class="project-title">Nati Market</h3>
+                    <p class="project-desc">A frontend marketplace demonstration highlighting UI/UX design. (Note: This is a frontend visual demo only, no backend).</p>
+                    <div class="project-actions">
+                        <button class="btn btn-secondary" style="flex:1" onclick="openPreview('Nati Market', 'https://fk-edits.github.io/Nati-market/', 'Frontend-Only Marketplace Demo')"><i data-lucide="external-link"></i> Live Preview</button>
+                    </div>
+                </div>
+
+                <!-- Project 7 -->
+                <div class="project-card">
+                    <div class="project-header">
+                        <div class="project-icon"><i data-lucide="shopping-cart"></i></div>
+                        <span class="project-type">Top-Up & Shopping</span>
+                    </div>
+                    <h3 class="project-title">ABM SMM</h3>
+                    <p class="project-desc">A comprehensive shopping and manual top-up platform designed for digital service orders.</p>
+                    <div class="project-actions">
+                        <button class="btn btn-secondary" style="flex:1" onclick="openPreview('ABM SMM', 'https://fk-edits.github.io/ABMsmm', 'Full-Stack Manual Top-Up & Shopping Website')"><i data-lucide="external-link"></i> Live Preview</button>
+                    </div>
+                </div>
+
+                <!-- Project 8 (Bot) -->
                 <div class="project-card" style="border-color: rgba(41, 169, 234, 0.3);">
-                    <div class="project-content">
-                        <span class="project-badge" style="background: rgba(41, 169, 234, 0.15); color: #29a9ea;"><i data-lucide="bot" style="width:12px; display:inline; margin-bottom:-2px;"></i> Telegram Bot</span>
-                        <h3 class="project-title">YAB Top-Up Bot</h3>
-                        <p class="project-desc">An automated Telegram top-up bot designed to streamline digital product purchases and delivery, reduce manual order handling, and provide customers with a convenient purchasing experience.</p>
-                        <div class="project-actions" style="margin-top: auto;">
-                            <a href="https://t.me/yabtopupp_bot" target="_blank" class="btn btn-primary" style="flex:1; background: #29a9ea;"><i data-lucide="send"></i> Open Bot</a>
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon" style="background: rgba(41, 169, 234, 0.1); color: #29a9ea;"><i data-lucide="bot"></i></div>
+                        <span class="project-type">Automated Bot</span>
+                    </div>
+                    <h3 class="project-title">YAB Top-Up Bot</h3>
+                    <p class="project-desc">A Telegram bot for automatic top-up services, streamlining digital product purchases and delivery.</p>
+                    <div class="project-actions">
+                        <a href="https://t.me/yabtopupp_bot" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex:1; background: linear-gradient(135deg, #29a9ea, #1e88e5);"><i data-lucide="send"></i> Open Bot</a>
                     </div>
                 </div>
 
-                <!-- 09 ABi Online Bot -->
+                <!-- Project 9 (Bot) -->
                 <div class="project-card" style="border-color: rgba(41, 169, 234, 0.3);">
-                    <div class="project-content">
-                        <span class="project-badge" style="background: rgba(41, 169, 234, 0.15); color: #29a9ea;"><i data-lucide="bot" style="width:12px; display:inline; margin-bottom:-2px;"></i> Telegram Bot & Mini App</span>
-                        <h3 class="project-title">ABi Online Bot</h3>
-                        <p class="project-desc">A Telegram-based digital platform combining bot functionality with a Mini App, allowing users to explore content and interact with the platform directly through Telegram.</p>
-                        <div class="project-actions" style="margin-top: auto;">
-                            <a href="https://t.me/Abionline_bot" target="_blank" class="btn btn-primary" style="flex:1; background: #29a9ea;"><i data-lucide="send"></i> Open Bot</a>
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon" style="background: rgba(41, 169, 234, 0.1); color: #29a9ea;"><i data-lucide="layers"></i></div>
+                        <span class="project-type">Bot & Mini App</span>
+                    </div>
+                    <h3 class="project-title">ABi Online Bot</h3>
+                    <p class="project-desc">A Telegram experience combining bot functionality with a Mini App, serving as a promotional content hub.</p>
+                    <div class="project-actions">
+                        <a href="https://t.me/Abionline_bot" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex:1; background: linear-gradient(135deg, #29a9ea, #1e88e5);"><i data-lucide="send"></i> Open Bot</a>
                     </div>
                 </div>
-            </div>
-
-            <div class="show-more-container">
-                <button id="toggle-projects-btn" class="btn btn-secondary" onclick="toggleProjects()"><i data-lucide="chevron-down"></i> Show More Projects</button>
             </div>
         </section>
 
         <!-- Services Section -->
         <section id="services" class="reveal">
-            <div class="section-title"><i data-lucide="layers" class="title-icon"></i> Development Services<div class="title-line"></div></div>
+            <div class="section-title"><i data-lucide="cpu" class="title-icon"></i> Services & Capabilities<div class="title-line"></div></div>
             <div class="services-grid">
-                <div class="service-card" style="border-color: rgba(124, 92, 252, 0.4); background: rgba(124, 92, 252, 0.05);">
-                    <i data-lucide="cpu" class="service-icon"></i>
-                    <h4 class="service-title">Payment & Top-Up Automation</h4>
-                    <p class="service-desc">Automated payment verification systems, automatic top-up bots, and digital product delivery (dependent on provider APIs).</p>
+                <div class="service-card">
+                    <div class="service-symbol"><i data-lucide="globe"></i></div>
+                    <h4 class="service-name">Website Development</h4>
+                    <p class="service-desc">Modern, responsive, and visually striking custom websites tailored for businesses and personal brands.</p>
                 </div>
                 <div class="service-card">
-                    <i data-lucide="globe" class="service-icon"></i>
-                    <h4 class="service-title">Website Development</h4>
-                    <p class="service-desc">Modern, responsive, and visually striking websites tailored for personal brands and businesses.</p>
+                    <div class="service-symbol"><i data-lucide="database"></i></div>
+                    <h4 class="service-name">Full-Stack Web Apps</h4>
+                    <p class="service-desc">Complete web applications featuring databases, secure authentication, and custom administrative dashboards.</p>
                 </div>
                 <div class="service-card">
-                    <i data-lucide="database" class="service-icon"></i>
-                    <h4 class="service-title">Full-Stack Web Apps</h4>
-                    <p class="service-desc">Complete web applications with user authentication, databases, and custom admin dashboards.</p>
+                    <div class="service-symbol"><i data-lucide="shopping-bag"></i></div>
+                    <h4 class="service-name">E-Commerce Platforms</h4>
+                    <p class="service-desc">Digital storefronts with dynamic product catalogs and order management solutions.</p>
                 </div>
                 <div class="service-card">
-                    <i data-lucide="bot" class="service-icon"></i>
-                    <h4 class="service-title">Telegram Bots & Mini Apps</h4>
-                    <p class="service-desc">Custom Telegram bot development and integrated Mini Apps for seamless platform interaction.</p>
+                    <div class="service-symbol"><i data-lucide="bot"></i></div>
+                    <h4 class="service-name">Telegram Bots & Mini Apps</h4>
+                    <p class="service-desc">Custom Telegram bot development and seamless Mini App integration for platform interaction.</p>
                 </div>
                 <div class="service-card">
-                    <i data-lucide="shopping-cart" class="service-icon"></i>
-                    <h4 class="service-title">E-Commerce Solutions</h4>
-                    <p class="service-desc">Online stores, product catalogs, and custom order management systems.</p>
+                    <div class="service-symbol"><i data-lucide="credit-card"></i></div>
+                    <h4 class="service-name">Payment Verification</h4>
+                    <p class="service-desc">Automated payment verification and processing (subject to supported payment provider APIs).</p>
                 </div>
                 <div class="service-card">
-                    <i data-lucide="settings" class="service-icon"></i>
-                    <h4 class="service-title">Business Automation</h4>
-                    <p class="service-desc">Digital platforms built to streamline manual workflows and manage customer interactions.</p>
+                    <div class="service-symbol"><i data-lucide="zap"></i></div>
+                    <h4 class="service-name">Business Automation</h4>
+                    <p class="service-desc">Automatic top-up bots, digital product delivery, and systems to streamline manual operations.</p>
                 </div>
             </div>
         </section>
@@ -539,187 +545,196 @@
             <div class="section-title"><i data-lucide="tag" class="title-icon"></i> Development Packages<div class="title-line"></div></div>
             
             <div class="pricing-grid">
-                <!-- Package 01 -->
+                <!-- Package 1 -->
                 <div class="price-card">
-                    <h4 class="price-name">Essential</h4>
-                    <div class="price-amount">5,000 <span>ETB</span></div>
+                    <div class="price-header">
+                        <h4 class="price-name">Essential</h4>
+                        <div class="price-amount">5,000 <span>ETB</span></div>
+                    </div>
                     <ul class="price-features">
-                        <li><i data-lucide="check-circle-2"></i> 1–3 website pages</li>
-                        <li><i data-lucide="check-circle-2"></i> Modern responsive design</li>
-                        <li><i data-lucide="check-circle-2"></i> Mobile & desktop compatibility</li>
-                        <li><i data-lucide="check-circle-2"></i> Basic animations & interactions</li>
-                        <li><i data-lucide="check-circle-2"></i> Contact links & basic SEO</li>
+                        <li><i data-lucide="check-circle-2"></i> 1–3 pages</li>
+                        <li><i data-lucide="check-circle-2"></i> Responsive design</li>
+                        <li><i data-lucide="check-circle-2"></i> Basic animations</li>
+                        <li><i data-lucide="check-circle-2"></i> Contact links</li>
+                        <li><i data-lucide="check-circle-2"></i> Basic SEO</li>
                         <li><i data-lucide="check-circle-2"></i> 1 revision</li>
                     </ul>
-                    <button class="btn btn-secondary price-btn" onclick="orderPackage('Essential', '5,000')">Order Now</button>
+                    <button class="btn btn-secondary w-full" style="width: 100%;" onclick="orderPackage('Essential', '5,000')">Order Now</button>
                 </div>
 
-                <!-- Package 02 -->
+                <!-- Package 2 -->
                 <div class="price-card">
-                    <h4 class="price-name">Professional</h4>
-                    <div class="price-amount">10,000 <span>ETB</span></div>
+                    <div class="price-header">
+                        <h4 class="price-name">Professional</h4>
+                        <div class="price-amount">10,000 <span>ETB</span></div>
+                    </div>
                     <ul class="price-features">
+                        <li><i data-lucide="check-circle-2"></i> Everything in Essential</li>
                         <li><i data-lucide="check-circle-2"></i> Up to 5 pages</li>
                         <li><i data-lucide="check-circle-2"></i> Custom UI/UX design</li>
-                        <li><i data-lucide="check-circle-2"></i> Interactive sections</li>
-                        <li><i data-lucide="check-circle-2"></i> Contact form integration</li>
-                        <li><i data-lucide="check-circle-2"></i> Social media integration</li>
-                        <li><i data-lucide="check-circle-2"></i> Basic product/service showcase</li>
+                        <li><i data-lucide="check-circle-2"></i> Forms & social integration</li>
+                        <li><i data-lucide="check-circle-2"></i> Product/service showcase</li>
+                        <li><i data-lucide="check-circle-2"></i> Improved SEO & performance</li>
                         <li><i data-lucide="check-circle-2"></i> 2 revisions</li>
                     </ul>
-                    <button class="btn btn-secondary price-btn" onclick="orderPackage('Professional', '10,000')">Order Now</button>
+                    <button class="btn btn-secondary w-full" style="width: 100%;" onclick="orderPackage('Professional', '10,000')">Order Now</button>
                 </div>
 
-                <!-- Package 03 (Popular) -->
+                <!-- Package 3 (Popular) -->
                 <div class="price-card popular">
                     <div class="popular-badge">Popular Choice</div>
-                    <h4 class="price-name" style="color: var(--accent2);">Premium</h4>
-                    <div class="price-amount">20,000 <span>ETB</span></div>
+                    <div class="price-header">
+                        <h4 class="price-name" style="color: var(--accent);">Premium</h4>
+                        <div class="price-amount">20,000 <span>ETB</span></div>
+                    </div>
                     <ul class="price-features">
+                        <li><i data-lucide="check-circle-2"></i> Everything in Professional</li>
                         <li><i data-lucide="check-circle-2"></i> Up to 8 pages</li>
-                        <li><i data-lucide="check-circle-2"></i> Advanced UI/UX design</li>
-                        <li><i data-lucide="check-circle-2"></i> User authentication</li>
-                        <li><i data-lucide="check-circle-2"></i> Dynamic content & database</li>
-                        <li><i data-lucide="check-circle-2"></i> Product catalog/management</li>
-                        <li><i data-lucide="check-circle-2"></i> Basic admin dashboard</li>
                         <li><i data-lucide="check-circle-2"></i> Firebase integration</li>
+                        <li><i data-lucide="check-circle-2"></i> Authentication</li>
+                        <li><i data-lucide="check-circle-2"></i> Dynamic content & database</li>
+                        <li><i data-lucide="check-circle-2"></i> Product catalog or CMS</li>
+                        <li><i data-lucide="check-circle-2"></i> Basic admin dashboard</li>
                         <li><i data-lucide="check-circle-2"></i> 3 revisions</li>
                     </ul>
-                    <button class="btn btn-primary price-btn" onclick="orderPackage('Premium', '20,000')">Get Started</button>
+                    <button class="btn btn-primary w-full" style="width: 100%;" onclick="orderPackage('Premium', '20,000')">Order Now</button>
                 </div>
 
-                <!-- Package 04 -->
-                <div class="price-card">
-                    <h4 class="price-name">Elite</h4>
-                    <div class="price-amount">50,000 <span>ETB</span></div>
+                <!-- Package 4 -->
+                <div class="price-card exclusive">
+                    <div class="price-header">
+                        <h4 class="price-name">Elite</h4>
+                        <div class="price-amount">50,000 <span>ETB</span></div>
+                    </div>
                     <ul class="price-features">
-                        <li><i data-lucide="check-circle-2"></i> Advanced full-stack functionality</li>
+                        <li><i data-lucide="check-circle-2"></i> Advanced full-stack website</li>
                         <li><i data-lucide="check-circle-2"></i> Custom admin dashboard</li>
-                        <li><i data-lucide="check-circle-2"></i> Database-driven management</li>
+                        <li><i data-lucide="check-circle-2"></i> Database and CMS</li>
                         <li><i data-lucide="check-circle-2"></i> User accounts & booking</li>
-                        <li><i data-lucide="check-circle-2"></i> Advanced search & filtering</li>
-                        <li><i data-lucide="check-circle-2"></i> API integrations</li>
+                        <li><i data-lucide="check-circle-2"></i> Search and filtering</li>
+                        <li><i data-lucide="check-circle-2"></i> API integration (if supported)</li>
                         <li><i data-lucide="check-circle-2"></i> Testing and deployment</li>
                         <li><i data-lucide="check-circle-2"></i> 4 revisions</li>
                     </ul>
-                    <button class="btn btn-secondary price-btn" onclick="orderPackage('Elite', '50,000')">Order Now</button>
+                    <button class="btn btn-secondary w-full" style="width: 100%;" onclick="orderPackage('Elite', '50,000')">Order Now</button>
                 </div>
 
-                <!-- Package 05 -->
-                <div class="price-card">
-                    <h4 class="price-name">Full-Stack</h4>
-                    <div class="price-amount">80,000 <span>ETB</span></div>
+                <!-- Package 5 -->
+                <div class="price-card exclusive">
+                    <div class="price-header">
+                        <h4 class="price-name">Full-Stack</h4>
+                        <div class="price-amount">80,000 <span>ETB</span></div>
+                    </div>
                     <ul class="price-features">
-                        <li><i data-lucide="check-circle-2"></i> Fully customized frontend & backend</li>
+                        <li><i data-lucide="check-circle-2"></i> Customized frontend & backend</li>
                         <li><i data-lucide="check-circle-2"></i> Advanced database architecture</li>
-                        <li><i data-lucide="check-circle-2"></i> Multiple user roles & permissions</li>
-                        <li><i data-lucide="check-circle-2"></i> Automated workflows & logic</li>
-                        <li><i data-lucide="check-circle-2"></i> Payment gateway integration</li>
-                        <li><i data-lucide="check-circle-2"></i> Automated digital delivery</li>
-                        <li><i data-lucide="check-circle-2"></i> Advanced security & optimization</li>
-                        <li><i data-lucide="check-circle-2"></i> Deployment & handover</li>
+                        <li><i data-lucide="check-circle-2"></i> User roles & permissions</li>
+                        <li><i data-lucide="check-circle-2"></i> Advanced admin dashboard</li>
+                        <li><i data-lucide="check-circle-2"></i> Custom business workflows</li>
+                        <li><i data-lucide="check-circle-2"></i> Payment/API integrations</li>
+                        <li><i data-lucide="check-circle-2"></i> Automated delivery/processing</li>
+                        <li><i data-lucide="check-circle-2"></i> Security improvements</li>
+                        <li><i data-lucide="check-circle-2"></i> Full deployment & handover</li>
                     </ul>
-                    <button class="btn btn-secondary price-btn" onclick="orderPackage('Full-Stack', '80,000')">Order Now</button>
+                    <button class="btn btn-secondary w-full" style="width: 100%;" onclick="orderPackage('Full-Stack', '80,000')">Order Now</button>
                 </div>
             </div>
+            
+            <p class="price-note">Note: Prices shown are starting rates. Complex projects may require a custom quote. Domain, hosting, and third-party service fees are handled separately.</p>
         </section>
 
-        <!-- About & Skills -->
+        <!-- Nexora Highlight -->
+        <div class="nexora-highlight reveal">
+            <div class="nexora-name"><i data-lucide="code-2" style="display:inline-block; margin-bottom:-4px; color:var(--accent);"></i> Nexora</div>
+            <p class="nexora-desc">
+                A creative web development brand I'm building to deliver modern, professional digital experiences — websites, tools, platforms, and online services. Nexora stands for creativity, technology, and continuous improvement.
+            </p>
+        </div>
+
+        <!-- About & Story -->
         <section id="about" class="reveal">
-            <div class="section-title"><i data-lucide="user" class="title-icon"></i> About Me & Skills<div class="title-line"></div></div>
+            <div class="section-title"><i data-lucide="user" class="title-icon"></i> About & Journey<div class="title-line"></div></div>
             <p style="color:var(--text2); margin-bottom:18px; font-size: 1.05rem;">
-                I am a Grade 12 student from Ethiopia passionate about technology, programming, creativity, and digital innovation. I build websites, explore AI tools, and create online projects while constantly improving my skills in web development, UI/UX design, and backend integration.
+                I am a passionate Grade 12 student from Ethiopia focused on technology, programming, and digital innovation. I build websites, explore AI tools, and create online projects while continuously refining my skills in frontend development, backend architecture, and UI/UX design.
             </p>
             
             <div class="info-grid">
                 <div class="info-card"><div class="info-label">Name</div><div class="info-value">Fikir Habtamu</div></div>
-                <div class="info-card"><div class="info-label">Location</div><div class="info-value">Ethiopia</div></div>
                 <div class="info-card"><div class="info-label">Education</div><div class="info-value">Grade 12</div></div>
-                <div class="info-card"><div class="info-label">Brand</div><div class="info-value">Nexora</div></div>
+                <div class="info-card"><div class="info-label">Country</div><div class="info-value">Ethiopia</div></div>
+                <div class="info-card"><div class="info-label">Languages</div><div class="info-value" style="font-size: 0.95rem;">Oromo, Amharic, English</div></div>
             </div>
 
-            <div class="skills-container">
-                <div style="flex: 1; min-width: 250px;">
-                    <div class="skill-item"><div class="skill-header"><span>HTML5 / CSS3</span><span>90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
-                    <div class="skill-item"><div class="skill-header"><span>JavaScript</span><span>75%</span></div><div class="skill-bar"><div class="skill-fill" data-width="75"></div></div></div>
-                    <div class="skill-item"><div class="skill-header"><span>Responsive UI/UX</span><span>92%</span></div><div class="skill-bar"><div class="skill-fill" data-width="92"></div></div></div>
-                    <div class="skill-item"><div class="skill-header"><span>Firebase / Backend</span><span>72%</span></div><div class="skill-bar"><div class="skill-fill" data-width="72"></div></div></div>
-                </div>
-                <div style="flex: 1; min-width: 250px;">
-                    <div class="skill-item"><div class="skill-header"><span>Creative Web Design</span><span>93%</span></div><div class="skill-bar"><div class="skill-fill" data-width="93"></div></div></div>
-                    <div class="skill-item"><div class="skill-header"><span>Telegram Bot Dev</span><span>65%</span></div><div class="skill-bar"><div class="skill-fill" data-width="65"></div></div></div>
-                    <div class="skill-item"><div class="skill-header"><span>AI Integration</span><span>58%</span></div><div class="skill-bar"><div class="skill-fill" data-width="58"></div></div></div>
-                    <div class="skill-item"><div class="skill-header"><span>React (Beginner)</span><span>50%</span></div><div class="skill-bar"><div class="skill-fill" data-width="50"></div></div></div>
-                </div>
-            </div>
-
-            <!-- Story Timeline -->
-            <div class="timeline" style="margin-top: 48px;">
-                <div class="timeline-step">
-                    <div class="step-title">The Start</div>
-                    <div class="step-desc">Discovered coding in Ethiopia and fell in love with building things on the web.</div>
-                </div>
-                <div class="timeline-step">
-                    <div class="step-title">Skill Building</div>
-                    <div class="step-desc">Mastered HTML, CSS, JavaScript, Firebase, and UI/UX through hands-on projects.</div>
-                </div>
-                <div class="timeline-step">
-                    <div class="step-title">Nexora is Born</div>
-                    <div class="step-desc">Founded Nexora to turn creative ideas into impactful, professional digital solutions.</div>
-                </div>
-                <div class="timeline-step">
-                    <div class="step-title">Future Vision</div>
-                    <div class="step-desc">Become a software engineer & entrepreneur, build scalable platforms, and grow Nexora globally.</div>
-                </div>
+            <div class="timeline">
+                <div class="timeline-step"><div class="step-title">The Start</div><div class="step-desc">Discovered coding in Ethiopia and fell in love with building things on the web.</div></div>
+                <div class="timeline-step"><div class="step-title">Skill Building</div><div class="step-desc">Mastered HTML, CSS, JavaScript, Firebase, and UI/UX through hands-on projects.</div></div>
+                <div class="timeline-step"><div class="step-title">Nexora is Born</div><div class="step-desc">Founded Nexora to turn my creative ideas into impactful digital solutions for businesses.</div></div>
+                <div class="timeline-step"><div class="step-title">Future Vision</div><div class="step-desc">Become a software engineer & entrepreneur, build scalable platforms, and grow Nexora globally.</div></div>
             </div>
         </section>
 
-        <!-- Contact -->
-        <section id="contact" class="reveal" style="background: linear-gradient(135deg, rgba(124, 92, 252, 0.1), var(--surface2)); border-color: rgba(124, 92, 252, 0.3);">
-            <div class="section-title" style="justify-content: center; margin-bottom: 40px;"><i data-lucide="message-square" class="title-icon"></i> Let's Work Together</div>
+        <!-- Huge Contact Section -->
+        <section id="contact" class="contact-section reveal">
+            <div class="section-title" style="justify-content: center;"><i data-lucide="message-square" class="title-icon"></i> Let's Work Together</div>
+            <p style="text-align: center; color: var(--text2); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Ready to start your next project? Get in touch to discuss requirements, quotes, and timelines.</p>
+            
             <div class="contact-row">
+                <!-- Telegram -->
                 <a href="javascript:void(0)" onclick="generalInquiry()" class="contact-card">
-                    <i data-lucide="send"></i>
+                    <div class="contact-icon-wrapper"><i data-lucide="send" style="width: 32px; height: 32px;"></i></div>
                     <div class="contact-label">Telegram</div>
                     <div class="contact-value">@NexoraET</div>
                 </a>
+                
+                <!-- Phone -->
                 <a href="tel:+251940099073" class="contact-card">
-                    <i data-lucide="phone"></i>
+                    <div class="contact-icon-wrapper"><i data-lucide="phone" style="width: 32px; height: 32px;"></i></div>
                     <div class="contact-label">Phone</div>
                     <div class="contact-value">0940099073</div>
                 </a>
-                <div class="contact-card" style="pointer-events: none;">
-                    <i data-lucide="map-pin"></i>
+                
+                <!-- Location (Linked gracefully to Adama) -->
+                <a href="https://www.google.com/maps/search/Adama,+Ethiopia" target="_blank" rel="noopener noreferrer" class="contact-card">
+                    <div class="contact-icon-wrapper"><i data-lucide="map-pin" style="width: 32px; height: 32px;"></i></div>
                     <div class="contact-label">Location</div>
                     <div class="contact-value">Ethiopia</div>
-                </div>
+                </a>
             </div>
         </section>
 
         <footer>
-            <div class="footer-brand"><i data-lucide="code-xml"></i> Nexora</div>
-            <p>Designed & built by <strong>Fikir Habtamu</strong> · Founder</p>
+            <div class="footer-brand"><i data-lucide="code-2" style="width: 18px;"></i> Nexora</div>
+            <p>Designed & built by <strong>Fikir Habtamu</strong></p>
             <p style="margin-top: 8px;">&copy; <span id="year"></span> Nexora. All rights reserved.</p>
         </footer>
     </div>
 
     <!-- Live Preview Modal -->
-    <div class="modal-overlay" id="preview-modal" onclick="if(event.target === this) closePreview()">
+    <div class="modal-overlay" id="preview-modal" role="dialog" aria-modal="true" tabindex="-1">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title"><i data-lucide="monitor"></i> <span id="preview-title">Project Preview</span></div>
+                <div class="modal-title-area">
+                    <div class="modal-title" id="preview-title">Project Title</div>
+                    <div class="modal-subtitle" id="preview-subtitle">Project Type</div>
+                </div>
                 <div class="modal-controls">
-                    <a href="#" id="preview-ext-link" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;"><i data-lucide="external-link" style="width: 16px;"></i> Open in Browser</a>
-                    <button class="btn btn-secondary" onclick="closePreview()" style="padding: 6px 12px; background: rgba(255,255,255,0.1); border:none;"><i data-lucide="x" style="width: 16px;"></i></button>
+                    <a href="#" id="preview-ext-link" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 8px 16px;">
+                        <i data-lucide="external-link" style="width: 16px;"></i> Open in Browser
+                    </a>
+                    <button class="btn btn-secondary" onclick="closePreview()" style="padding: 8px; border-radius: 50%;" aria-label="Close modal">
+                        <i data-lucide="x" style="width: 20px;"></i>
+                    </button>
                 </div>
             </div>
             <div class="iframe-container">
-                <div class="iframe-placeholder">
-                    <i data-lucide="loader-2"></i>
-                    <p style="font-weight: 600; margin-bottom: 8px; color: #fff;">Loading Preview...</p>
-                    <p style="font-size: 0.9rem;">If the website restricts embedding due to security rules,<br>please use the <strong>"Open in Browser"</strong> button above.</p>
+                <div class="iframe-loader" id="iframe-loader">
+                    <i data-lucide="loader-2" class="spinner" style="width: 40px; height: 40px;"></i>
+                    <p style="font-weight: 600; margin-bottom: 8px;">Loading Preview...</p>
+                    <p style="font-size: 0.9rem; color: var(--text3); text-align: center; max-width: 400px;">
+                        If the website does not load due to security restrictions, please use the <strong>"Open in Browser"</strong> button above.
+                    </p>
                 </div>
-                <iframe id="preview-iframe" class="modal-iframe" title="Website Preview" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+                <iframe id="preview-iframe" class="modal-iframe" title="Website Preview" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" onload="hideLoader()"></iframe>
             </div>
         </div>
     </div>
@@ -728,109 +743,134 @@
         // Initialize Icons
         lucide.createIcons();
 
-        // Dynamic Year
+        // Dynamic Copyright Year
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Dark/Light Mode Toggle Logic
+        const themeBtn = document.getElementById('theme-btn');
+        const body = document.body;
+        
+        // Check local storage for saved theme
+        const savedTheme = localStorage.getItem('nexora-theme');
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            updateThemeIcon('light');
+        }
+
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            const isLight = body.classList.contains('light-mode');
+            
+            localStorage.setItem('nexora-theme', isLight ? 'light' : 'dark');
+            updateThemeIcon(isLight ? 'light' : 'dark');
+        });
+
+        function updateThemeIcon(theme) {
+            themeBtn.innerHTML = theme === 'light' ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
+            lucide.createIcons();
+        }
 
         // Project Toggle Logic
         let projectsExpanded = false;
         function toggleProjects() {
-            const moreProjects = document.getElementById('more-projects');
+            const grid = document.getElementById('projects-container');
             const btn = document.getElementById('toggle-projects-btn');
             
             if (!projectsExpanded) {
-                moreProjects.classList.add('visible');
-                btn.innerHTML = '<i data-lucide="chevron-up" style="width: 18px;"></i> Show Less';
+                grid.classList.add('expanded');
+                btn.innerHTML = '<i data-lucide="chevron-up"></i> Show Less';
                 projectsExpanded = true;
-                lucide.createIcons();
             } else {
-                moreProjects.classList.remove('visible');
-                btn.innerHTML = '<i data-lucide="chevron-down" style="width: 18px;"></i> Show More Projects';
+                grid.classList.remove('expanded');
+                btn.innerHTML = '<i data-lucide="eye"></i> Explore My Projects';
                 projectsExpanded = false;
-                lucide.createIcons();
-                // Scroll back to portfolio section to prevent jumping
-                document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+                // Scroll back to title gracefully
+                document.getElementById('projects').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+            lucide.createIcons();
         }
 
-        // Telegram Order Functions
+        // Telegram Ordering Links (Prefilled Messages)
         function orderPackage(pkgName, price) {
-            const message = `Hello, I need to order the ${pkgName} website package.\n\nPackage: ${pkgName}\nPrice: ${price} ETB\n\nI would like to discuss the package details and get started.`;
+            const message = `Hello Fikir, I am interested in the ${pkgName} Website Package (${price} ETB). I would like to discuss my project.`;
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://t.me/NexoraET?text=${encodedMessage}`, '_blank', 'noopener,noreferrer');
         }
 
         function generalInquiry() {
-            const message = "Hello, I need to order a website.";
+            const message = "Hello Fikir, I am interested in your services. I would like to discuss a project.";
             const encodedMessage = encodeURIComponent(message);
             window.open(`https://t.me/NexoraET?text=${encodedMessage}`, '_blank', 'noopener,noreferrer');
         }
 
         // Live Preview Modal Logic
-        function openPreview(title, url) {
-            const modal = document.getElementById('preview-modal');
-            const iframe = document.getElementById('preview-iframe');
-            const titleEl = document.getElementById('preview-title');
-            const extLink = document.getElementById('preview-ext-link');
+        const modal = document.getElementById('preview-modal');
+        const iframe = document.getElementById('preview-iframe');
+        const loader = document.getElementById('iframe-loader');
+        
+        function openPreview(title, url, type) {
+            document.getElementById('preview-title').textContent = title;
+            document.getElementById('preview-subtitle').textContent = type;
+            document.getElementById('preview-ext-link').href = url;
             
-            titleEl.textContent = title;
-            extLink.href = url;
+            loader.style.display = 'flex'; // Show loader before setting src
+            iframe.style.opacity = '0';
             
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            document.body.style.overflow = 'hidden'; // Lock background scroll
             
-            // Set src slightly after animation starts for smoother feel
+            // Short delay to allow modal animation to start smoothly
             setTimeout(() => {
                 iframe.src = url;
             }, 100);
+            
+            modal.focus();
+        }
+
+        function hideLoader() {
+            if (iframe.src !== "about:blank" && iframe.src !== "") {
+                loader.style.display = 'none';
+                iframe.style.opacity = '1';
+            }
         }
 
         function closePreview() {
-            const modal = document.getElementById('preview-modal');
-            const iframe = document.getElementById('preview-iframe');
-            
             modal.classList.remove('active');
             document.body.style.overflow = '';
             
-            // Clear iframe to stop video/audio playing in background
+            // Clear iframe to prevent audio/video playing in background
             setTimeout(() => {
                 iframe.src = 'about:blank';
+                loader.style.display = 'flex';
             }, 300);
         }
 
-        // Intersection Observers for Scroll Animations
-        const revealElements = document.querySelectorAll('.reveal');
-        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closePreview();
+            }
+        });
         
+        // Close modal when clicking outside content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closePreview();
+        });
+
+        // Scroll Animations (Intersection Observer)
+        const revealElements = document.querySelectorAll('.reveal');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { 
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible'); 
-                    // Unobserve after revealing to prevent repeating animation
                     observer.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
         
         revealElements.forEach(el => observer.observe(el));
 
-        // Skill Bar Animation Observer
-        const skillFills = document.querySelectorAll('.skill-fill');
-        const skillObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const bar = entry.target;
-                    // Small timeout ensures CSS transition triggers properly
-                    setTimeout(() => {
-                        bar.style.width = bar.getAttribute('data-width') + '%';
-                    }, 100);
-                    skillObserver.unobserve(bar);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        skillFills.forEach(bar => skillObserver.observe(bar));
-
-        // Optimized Particle Background
+        // Particle Background Logic
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -841,10 +881,7 @@
             h = canvas.height = window.innerHeight; 
         }
         resize();
-        window.addEventListener('resize', () => { 
-            resize(); 
-            initParticles(); 
-        });
+        window.addEventListener('resize', () => { resize(); initParticles(); });
 
         class Particle {
             constructor() { this.reset(); }
@@ -855,7 +892,7 @@
                 this.speedX = (Math.random() - 0.5) * 0.4; 
                 this.speedY = (Math.random() - 0.5) * 0.4;
                 this.opacity = Math.random() * 0.4 + 0.1;
-                this.opacitySpeed = (Math.random() - 0.5) * 0.005;
+                this.opacitySpeed = (Math.random() - 0.5) * 0.004;
             }
             update() {
                 this.x += this.speedX; 
@@ -871,18 +908,21 @@
             draw() {
                 ctx.beginPath(); 
                 ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(167, 139, 250, ${this.opacity})`; 
+                
+                // Adjust particle color slightly based on theme
+                const isLight = document.body.classList.contains('light-mode');
+                ctx.fillStyle = isLight ? `rgba(107, 76, 230, ${this.opacity})` : `rgba(167, 139, 250, ${this.opacity})`; 
                 ctx.fill();
             }
         }
 
         function initParticles() {
-            // Respect prefers-reduced-motion
+            // Respect prefers-reduced-motion for accessibility
             if (window.matchMedia(`(prefers-reduced-motion: reduce)`).matches) return;
             
-            // Reduce particle count on smaller screens for performance
-            const density = window.innerWidth < 768 ? 18000 : 12000;
-            const count = Math.min(Math.floor((w * h) / density), 100);
+            // Adjust count based on screen size for performance
+            const density = window.innerWidth < 768 ? 16000 : 12000;
+            const count = Math.min(Math.floor((w * h) / density), 120);
             
             particles = [];
             for (let i = 0; i < count; i++) particles.push(new Particle());
@@ -891,27 +931,27 @@
 
         function animateParticles() {
             if (particles.length === 0) return;
-            
             ctx.clearRect(0, 0, w, h);
             
-            particles.forEach(p => { 
-                p.update(); 
-                p.draw(); 
-            });
+            const isLight = document.body.classList.contains('light-mode');
             
-            // Draw connecting lines if close enough
+            particles.forEach(p => { p.update(); p.draw(); });
+            
+            // Draw connecting lines
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
                     const distSq = dx * dx + dy * dy;
                     
-                    if (distSq < 8100) { // 90 * 90
+                    if (distSq < 8100) { // 90 * 90 distance check
                         const dist = Math.sqrt(distSq);
                         ctx.beginPath(); 
                         ctx.moveTo(particles[i].x, particles[i].y); 
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(124, 92, 252, ${0.08 * (1 - dist / 90)})`; 
+                        
+                        const alpha = 0.08 * (1 - dist / 90);
+                        ctx.strokeStyle = isLight ? `rgba(107, 76, 230, ${alpha})` : `rgba(124, 92, 252, ${alpha})`; 
                         ctx.lineWidth = 0.5; 
                         ctx.stroke();
                     }
